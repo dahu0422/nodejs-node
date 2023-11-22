@@ -17,3 +17,9 @@
 `res.writeHead`：接收三个参数，状态码、可读的状态消息、`header`响应头。必须在`res.end`之前调用。
 
 ## P12 一个简单的API
+
+## P13-14 农场DEMO
+1. 读取文件template文件夹下`.html`文件，以字符串形式返回；
+2. 遍历循环`data.json`中数据，通过字符串替换形式将替换`tempCard`的占位符。
+3. 将`templateOver`文件下占位符用`tempCard`替换。
+4. `res.end()`，启动服务，看效果。
