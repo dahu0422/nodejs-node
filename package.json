@@ -1,0 +1,20 @@
+{
+  "name": "nodejs-node",
+  "version": "1.0.0",
+  "description": "学习Nodejs记录",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dahu0422/nodejs-node.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dahu0422/nodejs-node/issues"
+  },
+  "homepage": "https://github.com/dahu0422/nodejs-node#readme"
+}
