@@ -30,7 +30,19 @@ const http = require('http')
 // ----------------- 服务API -----------------
 // 创建一个服务
 const server = http.createServer((req, res) => {
-  res.end('Hello from web server')
+  const pathName = req.url;
+  console.log(pathName);
+  if (pathName === '/' || pathName === '/overview') {
+    res.end('This is the OVERVIEW')
+  } else if (pathName === '/product') {
+    res.end('This is the PRODUCT')
+  } else {
+    res.writeHead(404, {
+      'Content-type': 'text/html',
+      'my-own-header': 'hello-world'
+    });
+    res.end('<h1>Page not found!</h1>')
+  }
 })
 
 // 监听来自127.0.0.1本机，端口为8000的请求

@@ -10,3 +10,8 @@
 - `http.createServer()`：创建一个web服务；  
 - `res.end()`：服务器向请求方发送消息；  
 - `server.linten()`：启动监听连接的服务器，接收端口、地址、回调函数。
+
+## P11 route路由
+通过req.url获取当前用户访问路由页面，展示不同页面信息。  
+`req.url`：获取当前用户访问路由页面。  
+`res.writeHead`：接收三个参数，状态码、可读的状态消息、`header`响应头。必须在`res.end`之前调用。
