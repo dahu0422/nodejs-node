@@ -1,5 +1,6 @@
 const fs = require('fs');
 const http = require('http')
+// const url = require('node:url')
 
 // ----------------- 文件API -----------------
 // 阻塞、同步方式
@@ -30,7 +31,7 @@ const http = require('http')
 // ----------------- 服务API -----------------
 const tempOverview = fs.readFileSync(`${__dirname}/templates/template-overview.html`, 'utf-8')
 const tempCard = fs.readFileSync(`${__dirname}/templates/template-card.html`, 'utf-8')
-const tempProduce = fs.readFileSync(`${__dirname}/templates/template-product.html`, 'utf-8')
+const tempProduct = fs.readFileSync(`${__dirname}/templates/template-product.html`, 'utf-8')
 
 
 const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, 'utf-8')
@@ -54,11 +55,16 @@ const replaceTemplate = (temp, product) => {
 
 // 创建一个服务
 const server = http.createServer((req, res) => {
-  const pathName = req.url;
-  console.log(pathName);
+  // const {pathname, query } = url.parse(req.url) // 已废弃，使用new URL
+
+  // TODO: 因为是本地的服务所以 req.protocol 是 undefined么？
+  const baseURL = req.protocol + '://' + req.headers.host + '/';
+  const url = new URL(req.url, baseURL)
+  const pathname = url.pathname
+  const id = url.searchParams.get('id')
 
   // Overview Page
-  if (pathName === '/' || pathName === '/overview') {
+  if (pathname === '/' || pathname === '/overview') {
     res.writeHead(200, { 'Content-Type': 'text/html' })
 
     const cardsHtml = dataObj.map(el => replaceTemplate(tempCard, el)).join('')
@@ -66,11 +72,14 @@ const server = http.createServer((req, res) => {
     res.end(output)
 
     //  Produce Page
-  } else if (pathName === '/product') {
-    res.end('This is the PRODUCT')
+  } else if (pathname === '/product') {
+    res.writeHead(200, { 'Content-Type': 'text/html' })
+    const product = dataObj[id]
+    const output = replaceTemplate(tempProduct, product)
+    res.end(output)
 
     // Api Page
-  } else if (pathName === '/api') {
+  } else if (pathname === '/api') {
     res.writeHead(200, { 'Content-Type': 'application/json' })
     res.end(data)
 
