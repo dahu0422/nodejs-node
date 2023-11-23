@@ -34,3 +34,10 @@
 
 ## P16 使用module.exports
 将`replaceTemplate()`封装成公用方法，通过modules.exports导出。
+
+## P17 介绍 npm
+
+## dependencies 和 devDependencies
+项目依赖和开发依赖的区别，默认安装是项目依赖，--save-dev安装开发依赖。  
+
+如何使用项目中安装的开发依赖，例如nodemon。
