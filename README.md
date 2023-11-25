@@ -37,7 +37,22 @@
 
 ## P17 介绍 npm
 
-## dependencies 和 devDependencies
+## P18 dependencies 和 devDependencies
 项目依赖和开发依赖的区别，默认安装是项目依赖，--save-dev安装开发依赖。  
 
 如何使用项目中安装的开发依赖，例如nodemon。
+
+## P19 如何引入、使用第三方包
+
+## P20 依赖包版本和更新
+`npm outdated`：检查当前项目包版本是否落后；
+
+`package.json`：项目清单。官方介绍：
+> https://dev.nodejs.cn/learn/the-package-json-guide/
+
+软件包版本：所有版本都有3个数字，第一个是主版本，第二个是次版本，第三个是补丁版本。
+- `~3.1.0`：表示安装`3.1.x`最新版本，单不更新主版本号、次版本号。
+- `^3.1.0`：表示安装`3.x.x`最新版本，但不更新主版本号。
+- `*3.1.0`：表示安装最新版本，更新主版本号。
+
+`package.json`：跟踪被安装的每个软件包的确切版本，以便产品可以以完全相同的方式被复制。

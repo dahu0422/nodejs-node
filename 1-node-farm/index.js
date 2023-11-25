@@ -1,6 +1,7 @@
 const fs = require('fs');
 const http = require('http')
 // const url = require('node:url')
+const slugify = require('slugify')
 const replaceTemplate = require('./module/replaceTemplate.js')
 
 // ----------------- 文件API -----------------
@@ -36,6 +37,9 @@ const tempProduct = fs.readFileSync(`${__dirname}/templates/template-product.htm
 
 const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, 'utf-8')
 let dataObj = JSON.parse(data)
+
+const slugs = dataObj.map(el => slugify(el.productName, { lower: true }))
+console.log(slugs);
 
 // 创建一个服务
 const server = http.createServer((req, res) => {
