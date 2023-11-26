@@ -58,4 +58,24 @@
 `package.json`：跟踪被安装的每个软件包的确切版本，以便产品可以以完全相同的方式被复制。
 
 ## P21 VScode配置
-prettier
+prettier 格式化文档
+ 
+ ---
+
+ ## P24 浏览器是如何工作的
+<img src="./浏览器工作概览.png">
+
+## P25 HTTP请求
+
+## P27 静态页面 动态页面
+通过`API`请求
+
+## P29 Node、chrome V8、Libuv、C++
+`Node.js`是基于`chreom V8`和`Libuv`进行封装的一层。
+
+## P30线程、线程池
+`Node.js`单线程。程序初始化时顶层代码会执行，注册必须的模块，然后事件循环开始运行。有些时间太耗时，将会被放入线程池中(图中举例哪种任务是繁重的)。
+<img src="./nodejs进程、线程池.png">
+
+## P31～32 Event Loop
+`process.env.UV_THREADPOOL_SIZE`设置线程池数量，通常默认是4个。
