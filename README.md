@@ -79,3 +79,7 @@ prettier 格式化文档
 
 ## P31～32 Event Loop
 `process.env.UV_THREADPOOL_SIZE`设置线程池数量，通常默认是4个。
+
+## P33 事件和事件驱动架构
+`Node.js`核心API都是围绕异步事件驱动架构构建的，在该架构中，某些类型的对象（“触发器”）触发命名事件。  
+所有触发事件的对象都是`EventEmitter`类的实例。这些对象暴露了`eventEmitter.on()`函数，允许将一个或多个函数绑定到对象触发的命名事件。
