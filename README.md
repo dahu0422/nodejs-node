@@ -84,11 +84,11 @@ prettier 格式化文档
 
 事件循环先执行`process.nextTick queue`中的任务，然后执行`Promise microtask queue`，再执行`macrotask queue`。
 
-## P33 事件和事件驱动架构
+## P33～34 事件和事件驱动架构
 `Node.js`核心API都是围绕异步事件驱动架构构建的，在该架构中，某些类型的对象（“触发器”）触发命名事件。  
 所有触发事件的对象都是`EventEmitter`类的实例。这些对象暴露了`eventEmitter.on()`函数，允许将一个或多个函数绑定到对象触发的命名事件。
 
-## P35 stream 流
+## P35～36 stream 流
 <img src="./stream类型.png">
 streams类型：
 - 可读流：可供读取的数据流，例如http请求、fs读取文件流。
@@ -102,3 +102,27 @@ streams类型：
 - fs.createReadStream()：pipe管道方式.
 
 按照作者视频上的讲解，应该第三种方式会很快展示出来，但令人意外的是，无论哪种方式我的电脑都崩溃了😅。
+
+## P37 模块引入是如何工作的
+<img src="./CommonJs.png">
+每个JS文件都被当成一个单独的模块，NodeJS中使用CommonJS Module导入方式，浏览器中使用ES Module导入方式。也有尝试将ES Module引入到NodeJS中，但不是主流方式。  
+
+当引入一个模块是会发生如下步骤：
+#### 解析和加载：
+<img src="./解析加载模块.png">
+  模块被分为三种类型：核心模块，开发者封装模块，第三方引入模块（npm）。  
+
+  1. 首先会判断是否为核心模块；
+  2. 如果是以./或者../开头的路径，则会尝试去开发者封装的模块下查找；
+  3. 如果没找到，会找当前文件夹中的index.js文件；
+  4. 如果都不是则会去`node_modules`中查找第三方模块。
+ 
+#### 封装
+<img src="./wrapping.png">
+运行JS文件时，Nodejs会将文件先放入到一个自执行匿名函数（立即执行函数）中，该函数中有五个参数：  
+
+- exports：需要导出的对象；
+- require：导入的模块；
+- module：
+- __fileName：文件名；
+- __dirname：目录名；
