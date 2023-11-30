@@ -154,3 +154,24 @@ stream类型：
 ## Promise、Async/Await
 ### 回调嵌套回调所引起的问题
 回调地狱
+
+### Promise
+一个`Promise`是一个代理，代表一个在创建`promise`时不一定已知的值。允许将处理程序与异步操作的最终成功值和失败原因关联起来。使得异步方法可以像同步方法一样返回值：异步方法不会立即返回一个最终值，而是返回一个promise，以便在将来的某个时间点提供值。
+
+```js
+const readFilePromise = (path) => {
+  new Promise((resolve, reject) => {
+    readFile(path, (error, result) => {
+      if(err) {
+        reject(error)
+      } else {
+        resolve(result)
+      }
+    })
+  })
+}
+
+readFilePromise('./data.txt')
+  .then((res) => console.log(res))
+  .catch((err) => console.error('读取文件失败'))
+```
