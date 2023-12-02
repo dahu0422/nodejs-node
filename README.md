@@ -175,3 +175,15 @@ readFilePromise('./data.txt')
   .then((res) => console.log(res))
   .catch((err) => console.error('读取文件失败'))
 ```
+
+### P43～44 Async\Await
+使用`async`和`await`关键字更简洁写出基于`Promise`的异步行为，无需刻意地链式调用`promise`
+
+返回一个`Promise`  
+
+`async`函数可能包含0个或多个`await`表达式。`await`表达式会暂停整个`async`函数的执行进程并出让其控制权。只有当其等待的基于`promise`的异步函数操作被兑现或被拒绝后才会恢复进程。  
+`promise`的解决值会被当作该`await`表达式的返回值。
+
+### P45 Promise.all
+`Promise.all()`静态方法接受一个Promise可迭代对象，返回一个`Promise`。当所有输入的`Promise`都被对象，返回的`Promise`也将被兑现，并返回一个包含所有兑现值的数组。  
+如果输入的任何`Promise`被拒绝，则返回的`Promise`将被拒绝，并带有第一个被拒绝的原因。

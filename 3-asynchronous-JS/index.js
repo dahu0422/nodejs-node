@@ -60,23 +60,23 @@ const writeFilePro = (file, data) => {
 //   })
 
 // Async / Await
-const getDogPic = async () => {
-  try {
-    const data = await readFilePro(`${__dirname}/dog.txt`)
-    console.log(`Bread:${data}`)
+// const getDogPic = async () => {
+//   try {
+//     const data = await readFilePro(`${__dirname}/dog.txt`)
+//     console.log(`Bread:${data}`)
 
-    const res = await superagent.get(
-      `https://dog.ceo/api/breed/${data}/images/random`
-    )
-    console.log(res.body.message)
+//     const res = await superagent.get(
+//       `https://dog.ceo/api/breed/${data}/images/random`
+//     )
+//     console.log(res.body.message)
 
-    await writeFilePro('dog-img.txt', res.body.message)
-    console.log('Random dog image saved to file!')
-  } catch (err) {
-    throw err
-  }
-  return '2: READY DOG'
-}
+//     await writeFilePro('dog-img.txt', res.body.message)
+//     console.log('Random dog image saved to file!')
+//   } catch (err) {
+//     throw err
+//   }
+//   return '2: READY DOG'
+// }
 
 // const x = getDogPic()
 // 打印x 返回 Promise <pending >；async自动返回一个promise
@@ -90,13 +90,44 @@ const getDogPic = async () => {
 // })
 
 // 获取返回值 Solution2:自执行函数
-;(async () => {
+// ;(async () => {
+//   try {
+//     console.log('1:Will get dog pics!')
+//     const x = await getDogPic()
+//     console.log(x)
+//     console.log('3:Done getting dog pics!')
+//   } catch (err) {
+//     console.log(err)
+//   }
+// })()
+
+// Promise.all
+const getDogPic = async () => {
   try {
-    console.log('1:Will get dog pics!')
-    const x = await getDogPic()
-    console.log(x)
-    console.log('3:Done getting dog pics!')
+    const data = await readFilePro(`${__dirname}/dog.txt`)
+    console.log(`Bread:${data}`)
+
+    const res1 = superagent.get(
+      `https://dog.ceo/api/breed/${data}/images/random`
+    )
+    const res2 = superagent.get(
+      `https://dog.ceo/api/breed/${data}/images/random`
+    )
+    const res3 = superagent.get(
+      `https://dog.ceo/api/breed/${data}/images/random`
+    )
+
+    const all = await Promise.all([res1, res2, res3])
+    const imgs = all.map((x) => x.body.message)
+    console.log(imgs)
+
+    await writeFilePro('dog-img.txt', imgs.join('\n'))
+    console.log('Random dog image saved to file!')
   } catch (err) {
-    console.log(err)
+    throw err
   }
-})()
+  return '2: READY DOG'
+}
+
+// 获取返回值 Solution2:自执行函数
+getDogPic()
