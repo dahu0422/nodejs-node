@@ -73,7 +73,30 @@ const getDogPic = async () => {
     await writeFilePro('dog-img.txt', res.body.message)
     console.log('Random dog image saved to file!')
   } catch (err) {
+    throw err
+  }
+  return '2: READY DOG'
+}
+
+// const x = getDogPic()
+// 打印x 返回 Promise <pending >；async自动返回一个promise
+
+// 获取返回值 Solution1:promise方式
+// console.log('1:Will get dog pics!')
+// getDogPic().then((res) => {
+//   const x = res
+//   console.log(x)
+//   console.log('3:Done getting dog pics!')
+// })
+
+// 获取返回值 Solution2:自执行函数
+;(async () => {
+  try {
+    console.log('1:Will get dog pics!')
+    const x = await getDogPic()
+    console.log(x)
+    console.log('3:Done getting dog pics!')
+  } catch (err) {
     console.log(err)
   }
-}
-getDogPic()
+})()
