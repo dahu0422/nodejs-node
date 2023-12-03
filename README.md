@@ -187,3 +187,10 @@ readFilePromise('./data.txt')
 ### P45 Promise.all
 `Promise.all()`静态方法接受一个Promise可迭代对象，返回一个`Promise`。当所有输入的`Promise`都被对象，返回的`Promise`也将被兑现，并返回一个包含所有兑现值的数组。  
 如果输入的任何`Promise`被拒绝，则返回的`Promise`将被拒绝，并带有第一个被拒绝的原因。
+
+## Express
+### P48 Express介绍
+### P49 安装Postman
+### P50 创建Express和路由
+### P51 RESTful API
+### P52 创建一个Get请求
