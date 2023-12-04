@@ -8,27 +8,16 @@ const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
 )
 
-app.get('/api/v1/tours/:id', (req, res) => {
-  console.log(req.params)
-  const id = req.params.id * 1
-  const tour = tours.find((el) => el.id === id)
-
-  if (!tour) {
-    return res.status(404).json({
-      status: 'fail',
-      messgae: 'Invalid ID',
-    })
-  }
-
+// 获取所有旅游数据
+const getAllTours = (req, res) => {
   res.status(200).json({
     status: 'success',
-    data: {
-      tour,
-    },
+    data: { tours },
   })
-})
+}
 
-app.post('/api/v1/tours', (req, res) => {
+// 创建一条旅游数据
+const createTour = (req, res) => {
   // console.log(req.body)
 
   const newId = tours[tours.length - 1].id + 1
@@ -45,9 +34,29 @@ app.post('/api/v1/tours', (req, res) => {
       })
     }
   )
-})
+}
 
-app.patch('/api/v1/tours/:id', (req, res) => {
+// 查询某一条旅游数据
+const getTour = (req, res) => {
+  console.log(req.params)
+  const id = req.params.id * 1
+  const tour = tours.find((el) => el.id === id)
+
+  if (!tour) {
+    return res.status(404).json({
+      status: 'fail',
+      messgae: 'Invalid ID',
+    })
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: { tour },
+  })
+}
+
+// 修改某一条旅游数据
+const updateTour = (req, res) => {
   console.log(req.params)
   const id = req.params.id * 1
   const tour = tours.find((el) => el.id === id)
@@ -66,9 +75,10 @@ app.patch('/api/v1/tours/:id', (req, res) => {
       tour,
     },
   })
-})
+}
 
-app.delete('/api/v1/tours/:id', (req, res) => {
+// 删除某一条数据
+const deleteTour = (req, res) => {
   const id = req.params.id * 1
   const tour = tours.find((el) => el.id === id)
   if (!tour) {
@@ -82,7 +92,10 @@ app.delete('/api/v1/tours/:id', (req, res) => {
     status: 'success',
     data: null,
   })
-})
+}
+
+app.route('/api/v1/tours').get(getAllTours).post(createTour)
+app.route('/api/v1/tours/:id').get(getTour).patch(updateTour).delete(deleteTour)
 
 const port = 3000
 app.listen(port, () => {
