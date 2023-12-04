@@ -189,8 +189,15 @@ readFilePromise('./data.txt')
 如果输入的任何`Promise`被拒绝，则返回的`Promise`将被拒绝，并带有第一个被拒绝的原因。
 
 ## Express
-### P48 Express介绍
-### P49 安装Postman
-### P50 创建Express和路由
-### P51 RESTful API
-### P52 创建一个Get请求
+### P47 Express介绍
+### P48 安装Postman
+### P49 创建Express和路由
+### P50 RESTful API
+### P51 创建一个Get请求
+### P52 创建一个Post请求
+### P53 在请求中携带参数
+### P54 创建一个Patch请求
+### P55 创建一个Delete请求
+### P56 重构路由
+### P57 MiddleWare 和 Request-Response Cycle
+<img src="./image/express/middleware&request-response-cycle.png">
