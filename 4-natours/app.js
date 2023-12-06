@@ -109,9 +109,52 @@ const deleteTour = (req, res) => {
   })
 }
 
+// 获取所有用户信息
+const getAllUsers = (req, res) => {
+  res.status(500).json({
+    status: 500,
+    messgae: 'This route is not yet defined',
+  })
+}
+
+// 创建新用户信息
+const createUser = (req, res) => {
+  res.status(500).json({
+    status: 500,
+    messgae: 'This route is not yet defined',
+  })
+}
+
+// 查询某位用户信息
+const getUser = (req, res) => {
+  res.status(500).json({
+    status: 500,
+    messgae: 'This route is not yet defined',
+  })
+}
+
+// 更新某位用户信息
+const updateUser = (req, res) => {
+  res.status(500).json({
+    status: 500,
+    messgae: 'This route is not yet defined',
+  })
+}
+
+//  删除某位用户信息
+const deleteUser = (req, res) => {
+  res.status(500).json({
+    status: 500,
+    messgae: 'This route is not yet defined',
+  })
+}
+
 // 3.Routes
 app.route('/api/v1/tours').get(getAllTours).post(createTour)
 app.route('/api/v1/tours/:id').get(getTour).patch(updateTour).delete(deleteTour)
+
+app.route('/api/v1/users').get(getAllUsers).post(createUser)
+app.route('/api/v1/user/:id').get(getUser).patch(updateUser).delete(deleteUser)
 
 // 4.Start Server
 const port = 3000
