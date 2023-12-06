@@ -4,6 +4,17 @@ const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
 )
 
+exports.checkID = (req, res, next, val) => {
+  console.log(`Tour id is: ${val}`)
+  if (req.params.id * 1 > tours.length) {
+    return res.status(404).json({
+      status: 'fail',
+      messgae: 'Invalid ID',
+    })
+  }
+  next()
+}
+
 // 获取所有旅游数据
 exports.getAllTours = (req, res) => {
   res.status(200).json({
@@ -16,7 +27,7 @@ exports.getAllTours = (req, res) => {
 // 创建一条旅游数据
 exports.createTour = (req, res) => {
   // console.log(req.body)
-
+  const id = req.params.id * 1
   const newId = tours[tours.length - 1].id + 1
   const newTour = Object.assign({ id: newId }, req.body)
 
@@ -35,17 +46,8 @@ exports.createTour = (req, res) => {
 
 // 查询某一条旅游数据
 exports.getTour = (req, res) => {
-  console.log(req.params)
   const id = req.params.id * 1
   const tour = tours.find((el) => el.id === id)
-
-  if (!tour) {
-    return res.status(404).json({
-      status: 'fail',
-      messgae: 'Invalid ID',
-    })
-  }
-
   res.status(200).json({
     status: 'success',
     data: { tour },
@@ -54,17 +56,8 @@ exports.getTour = (req, res) => {
 
 // 修改某一条旅游数据
 exports.updateTour = (req, res) => {
-  console.log(req.params)
   const id = req.params.id * 1
   const tour = tours.find((el) => el.id === id)
-
-  if (!tour) {
-    return res.status(404).json({
-      status: 'fail',
-      message: 'Invalid ID',
-    })
-  }
-
   Object.assign(tour, req.body)
   res.status(200).json({
     status: 'success',
@@ -78,13 +71,6 @@ exports.updateTour = (req, res) => {
 exports.deleteTour = (req, res) => {
   const id = req.params.id * 1
   const tour = tours.find((el) => el.id === id)
-  if (!tour) {
-    return res.status(404).json({
-      status: 'fail',
-      message: 'Invalid ID',
-    })
-  }
-
   res.status(204).json({
     status: 'success',
     data: null,
