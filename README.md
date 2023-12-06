@@ -201,3 +201,7 @@ readFilePromise('./data.txt')
 ### P56 重构路由
 ### P57 MiddleWare 和 Request-Response Cycle
 <img src="./image/express/middleware&request-response-cycle.png">
+
+### P58 创建一个MiddleWare
+### P59 引用第三方中间件morgan
+安装一个 node.js的http请求记录的中间件。
