@@ -212,3 +212,4 @@ readFilePromise('./data.txt')
 ### P63 router.param
 路由参数添加回调触发器
 ### P64 链接多个中间件方法
+### P65 读取静态文件
