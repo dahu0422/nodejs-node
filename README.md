@@ -215,3 +215,5 @@ readFilePromise('./data.txt')
 ### P65 读取静态文件
 
 ### P66 环境变量
+### P67 配置eslint
+`npm install eslint prettier eslint-config-prettier eslint-plugin-prettier eslint-config-airbnb eslint-plugin-node eslint-plugin-import eslint-plugin-jsx-a11y eslint-plugin-react --save-dev`
