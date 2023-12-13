@@ -217,3 +217,28 @@ readFilePromise('./data.txt')
 ### P66 环境变量
 ### P67 配置eslint
 `npm install eslint prettier eslint-config-prettier eslint-plugin-prettier eslint-config-airbnb eslint-plugin-node eslint-plugin-import eslint-plugin-jsx-a11y eslint-plugin-react --save-dev`
+
+## Mongodb
+### P73 创建本地数据库
+- `use natours-test` 创建数据库；
+- `show dbs` 展示所有数据库，数据下面必须有集合才能找到；
+- `show collections` 展示数据库下面的集合；
+- `db.collection.insertOne()` 插入一条数据；
+- `db.collection.find()` 查看数据；
+
+### P74 数据库查询
+- `db.collection.find()`查看当前集合所有数据；
+- `db.collection.find({ name: 'The Forest Hiker'} )`查询名称为The Forest Hilker的数据；
+- `db.collection.find({ price: {$lte: 500} } )`查询价格小于等于500的数据；
+- `db.collection.find({ price: {$lt: 500}}, {rating: {$gte: 4.8}} )`查询价格小于500，评分大于等于4.8数据；
+- `db.collection.find({ $or: [{price:{$lt: 500}}, {rating: {$gte: 4.8}}] })`查询价格小于500，评分大于等于4.8的数据
+- `db.collection.find({ $or: [{price:{$gt: 500} }, {rating:{$gte: 4.8}}, {name: 1}] })`查询价格小于500，评分大于4.8的数据。只返回名称
+
+### P75 数据库更新
+`db.collection.updateOne({ price:{$gt:500}, rating:{$gte:4.8} }, {$set: {premium: true}} )`更新一条数据
+`db.collection.updateMany`更新多条数据
+
+`db.collection.update({name: 'The Snow Adventurer'}, {$unset: {premium: null}})`移除某条数据属性
+
+### P76 数据库删除
+`db.collection.deleteMany()`
