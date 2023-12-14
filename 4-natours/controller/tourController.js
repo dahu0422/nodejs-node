@@ -50,7 +50,6 @@ exports.getTour = async (req, res) => {
 
     res.status(200).json({
       status: 'success',
-      requestedAt: req.requestTime,
       data: { tour },
     });
   } catch (error) {
@@ -62,12 +61,23 @@ exports.getTour = async (req, res) => {
 };
 
 // 修改某一条旅游数据
-exports.updateTour = (req, res) => {
-  res.status(200).json({
-    status: 'success',
-    requestedAt: req.requestTime,
-    // data: { tours },
-  });
+exports.updateTour = async (req, res) => {
+  try {
+    // 找到并修改这条数据，返回修改后的对象
+    const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    res.status(200).json({
+      status: 'success',
+      data: { tour },
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      error: error,
+    });
+  }
 };
 
 // 删除某一条数据
