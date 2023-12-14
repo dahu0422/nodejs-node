@@ -20,12 +20,19 @@ exports.getAllTours = (req, res) => {
 };
 
 // 创建一条旅游数据
-exports.createTour = (req, res) => {
-  res.status(200).json({
-    status: 'success',
-    requestedAt: req.requestTime,
-    // data: { tours },
-  });
+exports.createTour = async (req, res) => {
+  try {
+    const newTour = await Tour.create(req.body);
+    res.status(200).json({
+      status: 'success',
+      data: { newTour },
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      message: 'Invaild data send!',
+    });
+  }
 };
 
 // 查询某一条旅游数据
