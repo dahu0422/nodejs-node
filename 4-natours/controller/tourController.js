@@ -14,16 +14,24 @@ exports.checkBody = (req, res, next) => {
 exports.getAllTours = async (req, res) => {
   try {
     // BUILD QUERY
-    // 1) filtering
+    // 1A) filtering
     const queryObj = { ...req.query };
     const excludedFields = ['page', 'limit', 'sort', 'fields'];
     excludedFields.forEach((el) => delete queryObj[el]);
 
-    // 2) advanced filtering
+    // 1B) advanced filtering
     let queryStr = JSON.stringify(queryObj);
     // 替换所有 gte、gt、lt、lte
     queryStr = queryStr.replace(/\b(gte|gt|lt|lte)\b/g, (match) => `$${match}`);
-    const query = Tour.find(JSON.parse(queryStr));
+    let query = Tour.find(JSON.parse(queryStr));
+
+    // 2) sort
+    if (req.query.sort) {
+      const sortBy = req.query.sort.split(',').join(' ');
+      query = query.sort(sortBy);
+    } else {
+      query = query.sort('-createdAt');
+    }
 
     // EXECUTE QUERY
     const tours = await query;
