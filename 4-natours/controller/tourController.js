@@ -41,6 +41,18 @@ exports.getAllTours = async (req, res) => {
       query = query.select('-__v');
     }
 
+    // 4) pagination
+    const page = req.query.page || 1;
+    const limit = req.query.limit || 100;
+    const skip = (page - 1) * limit;
+
+    if (req.query.page) {
+      const numTours = await Tour.countDocuments(); // 查询collection下数据总条数
+      if (skip >= numTours) throw new Error('This page does not exit');
+    }
+
+    query = query.skip(skip).limit(limit);
+
     // EXECUTE QUERY
     const tours = await query;
 
