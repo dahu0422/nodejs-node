@@ -13,9 +13,19 @@ exports.checkBody = (req, res, next) => {
 // 获取所有旅游数据
 exports.getAllTours = async (req, res) => {
   try {
-    const tours = await Tour.find();
+    // BUILD QUERY
+    const queryObj = { ...req.query };
+    const excludedFields = ['page', 'limit', 'sort', 'fields'];
+    excludedFields.forEach((el) => delete queryObj[el]);
+    const query = Tour.find(queryObj);
+
+    // EXECUTE QUERY
+    const tours = await query;
+
+    //SEND RESPONSE
     res.status(200).json({
       status: 'success',
+      resule: tours.length,
       data: { tours },
     });
   } catch (error) {
