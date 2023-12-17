@@ -123,10 +123,58 @@ exports.getTourStats = async (req, res) => {
       { $sort: { avgPrice: 1 } }, // 按照平均价降序排列
       // { $match: { _id: { $ne: 'EASY' } } }, // 排除EASY的
     ]);
-    res.status(200).send({
+    res.status(200).json({
       status: 'success',
       data: {
         stats,
+      },
+    });
+  } catch (error) {
+    res.status(400).send({
+      status: 'fail',
+      message: error,
+    });
+  }
+};
+
+// 获取年度每个月开展的旅游数据
+exports.getMountlyPlan = async (req, res) => {
+  try {
+    const year = req.params.year * 1;
+
+    const plan = await Tour.aggregate([
+      { $unwind: '$startDates' }, // 解构startDates字段
+      // 查询日期在21-01-01 12-31之间的数据
+      {
+        $match: {
+          startDates: {
+            $gte: new Date(`${year}-01-01`),
+            $lte: new Date(`${year}-12-31`),
+          },
+        },
+      },
+      // 按照月份分组，统计每个月有多少活动，以及他们的名字分别是什么
+      {
+        $group: {
+          _id: { $month: '$startDates' },
+          numTourStarts: { $sum: 1 },
+          tours: { $push: '$name' },
+        },
+      },
+      // 添加字段
+      { $addFields: { month: '$_id' } },
+      // 移除字段
+      { $project: { _id: 0 } },
+      // 按照数量降序排列
+      { $sort: { numTourStarts: -1 } },
+      // 限制返回个数
+      { $limit: 12 },
+    ]);
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        plan,
       },
     });
   } catch (error) {
