@@ -103,3 +103,36 @@ exports.deleteTour = async (req, res) => {
     });
   }
 };
+
+// 获取统计数据
+exports.getTourStats = async (req, res) => {
+  try {
+    const stats = await Tour.aggregate([
+      { $match: { ratingsAverage: { $gte: 4.5 } } }, // 过滤平均分大于等于4.5的数据，并传给$group，group会将他们分组。
+      {
+        $group: {
+          _id: { $toUpper: '$difficulty' }, // 按照困难程度进行分组
+          numTours: { $sum: 1 },
+          numRatings: { $sum: 'ratingsQuantity' },
+          avgRating: { $avg: '$ratingsAverage' },
+          avgPrice: { $avg: '$price' },
+          minPrice: { $min: '$price' },
+          maxPrice: { $max: '$price' },
+        },
+      },
+      { $sort: { avgPrice: 1 } }, // 按照平均价降序排列
+      // { $match: { _id: { $ne: 'EASY' } } }, // 排除EASY的
+    ]);
+    res.status(200).send({
+      status: 'success',
+      data: {
+        stats,
+      },
+    });
+  } catch (error) {
+    res.status(400).send({
+      status: 'fail',
+      message: error,
+    });
+  }
+};
