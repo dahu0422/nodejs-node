@@ -244,5 +244,10 @@ readFilePromise('./data.txt')
 `db.collection.deleteMany()`
 
 ## Mongoose
-### 105 Aggregation Middleware 聚合管道中间件
+### P105 Aggregation Middleware 聚合管道中间件
 `Aggregate pipline()`方法允许访问将要发送给MongoDB的`aggregation pipline`。
+
+### P106 内置数据校验
+[mongoose官方文档：内置校验规则](https://mongoosejs.com/docs/validation.html#built-in-validators)  
+
+校验必须定义在`SchemaType`当中。不同的`SchemaType`有不同的校验规则。
