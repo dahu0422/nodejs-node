@@ -121,6 +121,14 @@ tourSchema.post(/^find/, function (docs, next) {
   next();
 });
 
+// AGGREGATION MIDDLEWARE
+// this.pipline()返回将要发送给MongoDB的聚合管道数组，在数组前添加一个$match进行匹配。
+tourSchema.pre('aggregate', function (next) {
+  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+  console.log(this.pipeline());
+  next();
+});
+
 const Tour = mongoose.model('Tour', tourSchema);
 
 module.exports = Tour;

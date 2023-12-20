@@ -242,3 +242,7 @@ readFilePromise('./data.txt')
 
 ### P76 数据库删除
 `db.collection.deleteMany()`
+
+## Mongoose
+### 105 Aggregation Middleware 聚合管道中间件
+`Aggregate pipline()`方法允许访问将要发送给MongoDB的`aggregation pipline`。
