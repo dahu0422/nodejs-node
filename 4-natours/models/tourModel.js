@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const slugify = require('slugify');
+const validator = require('validator');
 
 const tourSchema = new Schema(
   {
@@ -13,7 +14,8 @@ const tourSchema = new Schema(
       // 允许命名长度校验
       maxlength: [40, 'A tour name must have less or equal then 40 characters'],
       minlength: [10, 'A tour name must have more or equal then 10 characters'],
-      // validate: [validator.isAlpha, 'Tour name must only contain characters']
+      // 自定义校验，第三方库validatior，校验名称只能为字母
+      // validate: [validator.isAlpha, 'Tour name must only contain characters'],
     },
     slug: String,
     duration: {

@@ -251,3 +251,6 @@ readFilePromise('./data.txt')
 [mongoose官方文档：内置校验规则](https://mongoosejs.com/docs/validation.html#built-in-validators)  
 
 校验必须定义在`SchemaType`当中。不同的`SchemaType`有不同的校验规则。
+
+### P107 自定义校验规则
+[mongoose官方文档：自定义校验规则](https://mongoosejs.com/docs/validation.html#custom-validators)
