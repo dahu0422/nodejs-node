@@ -254,3 +254,10 @@ readFilePromise('./data.txt')
 
 ### P107 自定义校验规则
 [mongoose官方文档：自定义校验规则](https://mongoosejs.com/docs/validation.html#custom-validators)
+
+
+## Error Handling 错误处理
+### P112 错误处理中间件
+[express官方文档：错误处理中间件](https://express.nodejs.cn/en/guide/using-middleware.html#middleware.error-handling)
+
+Express 有默认的错误处理程序，如果是同步代码抛出问题，自动捕获。如果是中间件，通过next传出err会进入错误处理中间件。
