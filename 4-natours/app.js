@@ -9,12 +9,13 @@ const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 
 // 1.MiddleWare
-// console.log(process.env.NODE_ENV);
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
+// 内置中间件
 app.use(express.json());
 app.use(express.static(`${__dirname}/public`));
+// 自定义中间件
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
   next();
@@ -24,6 +25,7 @@ app.use((req, res, next) => {
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 
+// 匹配所有http请求方法，如果不是已定义路由，则创建appError实例，传入错误信息和状态吗404.
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} in this server`, 404));
 });
