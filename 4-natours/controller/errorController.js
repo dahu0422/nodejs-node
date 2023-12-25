@@ -20,6 +20,14 @@ const handleValidationErrorDB = (err) => {
   return new AppError(message, 400);
 };
 
+// 处理jsonWebToken返回的错误，token异常错误
+const handleJWTError = () =>
+  new AppError('Invalid token. Please log in again', 401);
+
+// 处理jsonWebToken返回的错误，token过期错误
+const handleJWTExpiredError = () =>
+  new AppError('Your token has expired! Please log in again', 401);
+
 // 开发模式下的错误处理
 const sendErrorDev = (err, res) => {
   res.status(err.statusCode).json({
@@ -38,6 +46,8 @@ const sendErrorProd = (err, res) => {
       message: err.message,
     });
   } else {
+    console.error('ERROR 💥', err);
+
     res.status(500).json({
       status: 'error',
       message: 'Something went very wrong',
@@ -46,18 +56,21 @@ const sendErrorProd = (err, res) => {
 };
 
 module.exports = (err, req, res, next) => {
-  console.log(err);
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
   if (process.env.NODE_ENV === 'development') {
     sendErrorDev(err, res);
   } else if (process.env.NODE_ENV === 'production') {
+    // FIXME:这里有问题，导致error.message获取不到
     let error = JSON.parse(JSON.stringify(err)); // 无论使用哪种方式，这里拿到的error和传进来的err有些区别。
+    // let error = { ...err };
 
     if (error.name === 'CastError') error = handleCastErrorDB(error);
     if (error.code === 11000) error = handleDuplicateFieldsDB(error);
     if (error.name === 'ValidationError')
       error = handleValidationErrorDB(error);
+    if (error.name === 'JsonWebTokenError') error = handleJWTError();
+    if (error.name === 'TokenExpiredError') error = handleJWTExpiredError();
 
     sendErrorProd(error, res);
   }

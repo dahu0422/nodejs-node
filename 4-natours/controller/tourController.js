@@ -1,6 +1,6 @@
+const Tour = require('./../models/tourModel');
 const APIFeatures = require('../utils/apiFeatures');
 const catchAsync = require('../utils/catchAsync');
-const Tour = require('./../models/tourModel');
 const AppError = require('../utils/appError');
 
 // 获取Top5的旅游数据
