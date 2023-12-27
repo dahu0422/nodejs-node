@@ -17,6 +17,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
+    passwordChangedAt: req.body.passwordChangedAt,
   });
 
   // 为了注册后能直接登录所以这里注册了token
@@ -86,6 +87,13 @@ exports.protect = catchAsync(async (req, res, next) => {
   }
 
   // 4) Check if user changed password after the token was issued
+  if (freshUser.changedPasswordAfter(decoded.iat)) {
+    return next(
+      new AppError('User recently changed password! please log in again', 401),
+    );
+  }
 
+  // GRANT ACCESS TO PROTECT ROUTE
+  req.user = freshUser;
   next();
 });
