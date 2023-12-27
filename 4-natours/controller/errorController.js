@@ -58,12 +58,13 @@ const sendErrorProd = (err, res) => {
 module.exports = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
+
   if (process.env.NODE_ENV === 'development') {
     sendErrorDev(err, res);
   } else if (process.env.NODE_ENV === 'production') {
-    // FIXME:这里有问题，导致error.message获取不到
-    let error = JSON.parse(JSON.stringify(err)); // 无论使用哪种方式，这里拿到的error和传进来的err有些区别。
-    // let error = { ...err };
+    let error = { ...err };
+
+    error.message = err.message;
 
     if (error.name === 'CastError') error = handleCastErrorDB(error);
     if (error.code === 11000) error = handleDuplicateFieldsDB(error);
