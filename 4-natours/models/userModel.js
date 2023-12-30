@@ -46,6 +46,18 @@ const userSchema = new Schema({
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
+  active: {
+    type: Boolean,
+    default: true,
+    select: false, // 查询时不返回
+  },
+});
+
+// 仅查询active 不为false
+userSchema.pre(/^find/, function (next) {
+  // this points to the current query
+  this.find({ active: { $ne: false } });
+  next();
 });
 
 userSchema.pre('save', async function (next) {

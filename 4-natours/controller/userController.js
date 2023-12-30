@@ -10,6 +10,7 @@ const filterObj = (obj, ...allowFields) => {
   return newObj;
 };
 
+// 更新用户信息
 exports.updateMe = catchAsync(async (req, res, next) => {
   // 1) Create error if user POSTs password data
   if (req.body.password || req.body.passwordConfirm) {
@@ -32,6 +33,16 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: 'success',
     user: updateUser,
+  });
+});
+
+// 软删除用户，将active修改为false，查询时不筛选出来。
+exports.deleteMe = catchAsync(async (req, res, next) => {
+  await User.findByIdAndUpdate(req.user.id, { active: false });
+
+  res.status(204).json({
+    status: 'success',
+    data: null,
   });
 });
 
