@@ -2,6 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const globalErrorHandler = require('./controller/errorController');
 const AppError = require('./utils/appError');
+const rateLimit = require('express-rate-limit');
 
 const app = express();
 
@@ -12,6 +13,15 @@ const userRouter = require('./routes/userRoutes');
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
+
+// 限制访问次数，防止暴力请求
+const limiter = rateLimit({
+  max: 100,
+  windowMS: 60 * 60 * 1000,
+  message: 'Too many requests from this IP, Please try again in an hour',
+});
+app.use('/api', limiter);
+
 // 内置中间件
 app.use(express.json());
 app.use(express.static(`${__dirname}/public`));
