@@ -3,6 +3,7 @@ const morgan = require('morgan');
 const globalErrorHandler = require('./controller/errorController');
 const AppError = require('./utils/appError');
 const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
 
 const app = express();
 
@@ -10,11 +11,15 @@ const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 
 // 1.MiddleWare
+// Set security HTTP headers
+app.use(helmet());
+
+// Development logging
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-// 限制访问次数，防止暴力请求
+// LImit requests from same API
 const limiter = rateLimit({
   max: 100,
   windowMS: 60 * 60 * 1000,
@@ -22,12 +27,14 @@ const limiter = rateLimit({
 });
 app.use('/api', limiter);
 
-// 内置中间件
-app.use(express.json());
+// Body parser, rending data from body into req.body
+app.use(express.json({ limit: '10kb' }));
+
+// Serving static files
 app.use(express.static(`${__dirname}/public`));
-// 自定义中间件
+
+// Test middleware
 app.use((req, res, next) => {
-  // console.log(req.headers);
   req.requestTime = new Date().toISOString();
   next();
 });
