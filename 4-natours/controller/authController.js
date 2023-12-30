@@ -23,6 +23,7 @@ const createSendToken = (user, statusCode, res) => {
   });
 };
 
+//注册
 exports.signup = catchAsync(async (req, res, next) => {
   const newUser = await User.create({
     name: req.body.name,
