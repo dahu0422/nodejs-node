@@ -13,6 +13,16 @@ const signToken = (id) => {
   });
 };
 
+// 创建并发送token
+const createSendToken = (user, statusCode, res) => {
+  const token = signToken(user._id);
+
+  res.status(statusCode).json({
+    data: 'success',
+    token,
+  });
+};
+
 exports.signup = catchAsync(async (req, res, next) => {
   const newUser = await User.create({
     name: req.body.name,
@@ -24,15 +34,7 @@ exports.signup = catchAsync(async (req, res, next) => {
   });
 
   // 为了注册后能直接登录所以这里注册了token
-  const token = signToken(newUser._id);
-
-  res.status(201).json({
-    status: 'success',
-    token,
-    data: {
-      newUser,
-    },
-  });
+  createSendToken(newUser, 201, res);
 });
 
 // 登录
@@ -44,18 +46,17 @@ exports.login = catchAsync(async (req, res, next) => {
   }
   // 2) Check if user exists && password is correct
   const user = await User.findOne({ email }).select('+password');
-  const correct = await user.correctPassword(password, user.password);
+  if (!user) {
+    return next(new AppError('There in no user with this email address', 404));
+  }
 
+  const correct = await user.correctPassword(password, user.password);
   if (!user || !correct) {
     return next(new AppError('Incorrect email or password!'), 400);
   }
 
   // 3) If everything ok, send token to client
-  const token = signToken(user._id);
-  res.status(200).json({
-    status: 'success',
-    token,
-  });
+  createSendToken(user, 200, res);
 });
 
 // 路由保护
@@ -118,7 +119,7 @@ exports.forgetPassword = catchAsync(async (req, res, next) => {
   // 1) Get user based on POSTed email
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
-    return next(new AppError('There in no user with email address', 404));
+    return next(new AppError('There in no user with this email address', 404));
   }
   // 2) Generate the random reset token
   const resetToken = user.createPasswordResetToken();
@@ -185,10 +186,29 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 
   // 3) Update changedPasswordAt property for the user
   // 4) Log the user in, send JWT
-  const token = signToken(user._id);
+  createSendToken(user, 'success', res);
+});
 
-  res.status(200).json({
-    status: 'success',
-    token,
-  });
+// 修改密码
+exports.updatePassword = catchAsync(async (req, res, next) => {
+  // 1) Get user from collection
+  const user = await User.findById(req.user.id).select('+password');
+
+  // 2) Check if POSTed current password is correct
+  const correct = await user.correctPassword(
+    req.body.passwordCurrent,
+    user.password,
+  );
+
+  if (!correct) {
+    return next(new AppError('Your current password is wrong.', 400));
+  }
+  // 3) If so, update password
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  await user.save();
+  // User.findByIdAndUpdate will NOT work as intended. 不会进入到model中自定义校验，和schema.save()中去。
+
+  // 4) Log the user in, send JWT
+  createSendToken(user, 200, res);
 });
