@@ -997,7 +997,7 @@ userSchema.pre('save', async function(next) => {
   this.passwordConfirm = undefined
 })
 ```
-### P126 Json Web Token（JWT）
+### P126 ~ 127 Json Web Token（JWT）
 JWT是一种轻量级的身份认证和授权机制，用于在客户端和服务端之间安全地传输信息。JWTs是自包含的，包含所有必要的信息来验证用户身份，无需查询数据库，适合用于无状态API（RESTful API）。
 
 JWT结构：
@@ -1007,3 +1007,57 @@ JWT结构：
 
 <img src="./4-natours/public/img/JWT1.png">
 <img src="./4-natours/public/img/JWT2.png">
+
+使用jsonwebtoken第三方库生成token
+jwt.sign(payload, secretOrPrivateKey, [options, callback])：
+- payload：要编码在JWT中的数据，通常是用户标识符；
+- secretOrPrivateKey：用于签名的密钥或私钥；
+- options：可选对象，指定了过期时间；
+```javascript
+// authController.js
+const jwt = require('jsonwebtoken')
+
+exports.signUp = catchAsync(async (req, res) => {
+  const newUser = await User.create({
+    name: req.body.name,
+    email: req.body.email,
+    password: req.body.password,
+    passwordConfirm: req.body.passwordConfirm
+  })
+
+  const token = jwt.sign({id: newUser._id}, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN
+  })
+}
+```
+### P128 登录
+处理登录流程：
+1. 验证用户是否输入了email和password；
+2. 判断email和password是否匹配；
+3. 返回token；
+```javascript
+// authController.js
+
+exports.login = catchAsync(async (req, res, next) => {
+  // 1. 验证是否输入邮件和密码
+  const {email, password} = req.body
+  if(!email || !password) {
+    return new AppError('Please provide email and password!', 400)
+  }
+  // 2. 判断email和password是否匹配
+  const user = await User.findOne({ emial }).select('+password')
+  const password = await bcrypt.compare(password, user.password)
+  if(!user || !password) {
+    return new AppError('Incorrect email or password', 401)
+  }
+  // 3. 返回token
+  const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN  
+  })
+  res.status(200).json({
+    status: 'success',
+    token,
+    data: { user }
+  })
+}
+```
