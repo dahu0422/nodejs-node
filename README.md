@@ -977,5 +977,23 @@ exports.signUp = catchAsync(async (req, res) => {
     data: { newUser }
   })
 })
+```
 
+### P124 bcrypt加密密码
+`document.ismodified()`：判断字段是否被修改过  
+
+`bcrypt`结合了Blowfish加密算法和一种"盐"的随机数据，生成不可逆的散列值。即使数据库密码暴露，攻击者无法通过暴力破解或彩虹工具还原原始密码
+
+`bcrypt.hash(passwordToHash, saltRounds)`：将明文密码转换为哈希值。
+- passwordToHash：转哈希的原始密码
+- saltRounds：盐的随机数据，默认值10。更高的轮数表示更复杂的哈希
+```javascript
+const bcrypt = require('bcrypt')
+
+userSchema.pre('save', async function(next) => {
+  if (!this.ismodified('password')) return next()
+
+  this.password = await bcrypt.hash(this.password, 12)
+  this.passwordConfirm = undefined
+})
 ```
