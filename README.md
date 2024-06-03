@@ -956,3 +956,26 @@ const userSchema = new mongoose.Schema({
 const User = mongoose.model('User', userSchema)
 module.exports = User
 ```
+
+### P123 注册用户
+```javascript
+// userRoute.js
+const express = require('express')
+const router = express.Router()
+const { signUp } = require('../controller/authController.js')
+
+router.route('/signup').post(authController.signUp)
+
+
+// authController.js
+const User = require('../model/userModel.js')
+
+exports.signUp = catchAsync(async (req, res) => {
+  const newUser = await User.create(req.body) 
+  res.status(201).json({
+    status: 'success',
+    data: { newUser }
+  })
+})
+
+```
