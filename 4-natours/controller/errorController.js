@@ -40,14 +40,15 @@ const sendErrorDev = (err, res) => {
 
 // 生产模式下的错误处理
 const sendErrorProd = (err, res) => {
+  // 操作错误返回错误信息
   if (err.isOperational) {
     res.status(err.statusCode).json({
       status: err.status,
       message: err.message,
     });
   } else {
+    // 其他（第三方）错误返回未知错误信息
     console.error('ERROR 💥', err);
-
     res.status(500).json({
       status: 'error',
       message: 'Something went very wrong',

@@ -55,7 +55,7 @@ const tourSchema = new Schema(
       validate: {
         validator: function (val) {
           // this only points to current doc on NEW document creation
-          return val < this.price;
+          return val < this.get('price');
         },
         message: 'Discount price ({VALUE}) should be below regular price',
       },
@@ -86,7 +86,7 @@ const tourSchema = new Schema(
     },
   },
   {
-    toJSON: { virtuals: true },
+    toJSON: { virtuals: true }, // 虚拟属性
     toObject: { virtuals: true },
   },
 );
