@@ -892,7 +892,7 @@ module.exports = (err, req, res, next) => {
   }
 }
 ```
-### P119 全局捕获异步错误
+### P120 全局捕获异步错误
 `process.on`用于在Node.js进程中监听特定事件，是一个全局对象。
 `unhandledRejection`事件监听器会在`Promise`被拒绝时触发。
 ```javascript
@@ -904,7 +904,7 @@ process.on('unhandledRejection', (err) => {
   });
 });
 ```
-### P120 捕获uncaught exception错误
+### P121 捕获uncaught exception错误
 ```javascript
 process.on('uncaughtException', (err) => {
   console.log('UNCAUGHT EXCEPTION! 💥 Shutting down...');
@@ -915,7 +915,7 @@ process.on('uncaughtException', (err) => {
 })
 ```
 
-### P122 创建user model
+### P123 创建user model
 ```javascript
 // userModel.js
 // name、email、photo、password、passwordConfirm
@@ -957,7 +957,7 @@ const User = mongoose.model('User', userSchema)
 module.exports = User
 ```
 
-### P123 注册用户
+### P124 注册用户
 ```javascript
 // userRoute.js
 const express = require('express')
@@ -979,7 +979,7 @@ exports.signUp = catchAsync(async (req, res) => {
 })
 ```
 
-### P124 bcrypt加密密码
+### P125 bcrypt加密密码
 `document.ismodified()`：判断字段是否被修改过  
 
 `bcrypt`结合了Blowfish加密算法和一种"盐"的随机数据，生成不可逆的散列值。即使数据库密码暴露，攻击者无法通过暴力破解或彩虹工具还原原始密码
@@ -997,3 +997,13 @@ userSchema.pre('save', async function(next) => {
   this.passwordConfirm = undefined
 })
 ```
+### P126 Json Web Token（JWT）
+JWT是一种轻量级的身份认证和授权机制，用于在客户端和服务端之间安全地传输信息。JWTs是自包含的，包含所有必要的信息来验证用户身份，无需查询数据库，适合用于无状态API（RESTful API）。
+
+JWT结构：
+- 头部（Header）：通常包含令牌的类型和使用的签名算法；
+- 负载（Payload）：关于令牌的声明；
+- 签名（Signature）:将JWT中的头部和签名编码，结合密钥或者公钥使用指定的算法计算得出；
+
+<img src="./4-natours/public/img/JWT1.png">
+<img src="./4-natours/public/img/JWT2.png">
