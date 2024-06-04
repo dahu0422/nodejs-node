@@ -1061,3 +1061,37 @@ exports.login = catchAsync(async (req, res, next) => {
   })
 }
 ```
+
+### P129 ~ P130 路由保护
+```javascript
+// authController.js
+exports.protect = catchAsync(async (req, res, next) => {
+  // 1、验证是否传入header中是否存在token
+  let token = null;
+  if(req.header.authorization && req.header.authorization.startsWith('Bearer')) {
+    token = req.header.authorization.split(' ')[1]
+  }
+  if(!token) {
+    return next(new AppError('You are not logged in! Please log in to get access.', 401))
+  }
+
+  // 2、验证token是否合法，在errorController.js捕获token过期、token错误的异常
+  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET)
+  
+  // 3、验证用户是否存在
+  const freshUser = await User.findById(decoded.id)
+  if(!freshUser) {
+    return next(new AppError('The user belonging to this token does no longer exist.', 401))
+  }
+
+  // 4、验证用户是否修改过密码
+  if(freshUser.changedPasswordAfter(decoded.iat)) {
+    return next(new AppError(
+      'User recently changed password! Please log in again.', 401
+    ))
+  }
+
+  req.user = freshUser
+  next()
+})
+```
