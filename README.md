@@ -1095,3 +1095,21 @@ exports.protect = catchAsync(async (req, res, next) => {
   next()
 })
 ```
+### P131 调试Postman
+### P132 权限校验
+管理员级别可以删除旅游项目
+```javascript
+// authController.js
+exports.restrictTo = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return next(
+        new AppError('You do not have permission to perform this action', 403),
+      );
+    }
+    next();
+}
+
+// tourRoutes.js
+tourRouter.route('/:id').delete(protect, retrictTo('admin'), deleteTour)
+```
