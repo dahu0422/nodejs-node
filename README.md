@@ -1125,7 +1125,6 @@ tourRouter.route('/:id').delete(protect, retrictTo('admin'), deleteTour)
 - 拒绝服务（Denial-of Service, DOS）：通过大量恶意流量或资源消耗，使目标服务器、网络设备、数据库或应用程序无法正常工作。
   - 分布式拒绝服务：通过多个IP地址发起攻击，防御困难。
   - 单点拒绝服务：单一攻击者或设备发起，直接针对目标服务器或网络设备，发送大量请求耗尽资源。
-
 ### P140 cookie
 cookie是服务器发送到用户浏览器并保存在本地的一小块数据，客户端发送请求时会自动携带。token可以被存储在客户端localStorage中，也可以存储在cookie中。出于安全考虑本项目存储在cookie中。
 
@@ -1151,3 +1150,28 @@ exports.createSendToken = (user, statusCode, res) => {
   });
 }
 ```
+### P142 express-rate-limit
+express-rate-limit是一个中间件，用于限制请求频率。
+```javascript
+const limit = rateLimit({
+  max: 100, // 限制请求次数
+  windowMs: 60 * 60 * 1000, // 1小时
+  message: 'Too many requests from this IP, please try again in an hour!', // 超过限制时，返回给客户端的限制信息
+}
+```
+### P143 helmet中间件
+helmet是一个中间件，用于设置HTTP响应头，提高安全性，防范常见web漏洞。包括但不限于：
+- Content-Security-Policy：设置内容安全策略，通过定义白名单指明哪些外部资源可被加载，防止XSS攻击。
+- X-Content-Type-Options：设置禁止MIME类型检测，防止MIME类型检测漏洞。
+- X-Frame-Options：设置禁止页面被嵌入到其他页面中，防止点击劫持。
+- X-XSS-Protection：启用浏览器的跨站脚本过滤器，提供一层XSS攻击的防护。
+- Strict-Transport-Security：强制浏览器只能通过HTTPS与服务器通信，防止协议降级攻击。
+- Referrer-Policy：设置Referrer头，防止Referrer信息泄露。
+
+### P144 express-mongo-sanitize中间件、xss-clean中间件
+防止注入NOSQL语句和JS脚本
+- express-mongo-sanitize是一个中间件，用于过滤MongoDB的查询参数，防止MongoDB注入攻击。
+- xss-clean是一个中间件，用于过滤XSS攻击，防止XSS攻击。
+
+### P145 hpp中间件
+hpp中间件用于防止HTTP参数污染，检测和阻止请求中出现的重复参数名问题。
