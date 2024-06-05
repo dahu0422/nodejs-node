@@ -1008,11 +1008,11 @@ JWT结构：
 <img src="./4-natours/public/img/JWT1.png">
 <img src="./4-natours/public/img/JWT2.png">
 
-使用jsonwebtoken第三方库生成token
-jwt.sign(payload, secretOrPrivateKey, [options, callback])：
+使用jsonwebtoken第三方库生成token，`jwt.sign(payload, secretOrPrivateKey, [options, callback])`：
 - payload：要编码在JWT中的数据，通常是用户标识符；
 - secretOrPrivateKey：用于签名的密钥或私钥；
 - options：可选对象，指定了过期时间；
+
 ```javascript
 // authController.js
 const jwt = require('jsonwebtoken')
@@ -1112,4 +1112,42 @@ exports.restrictTo = (...roles) => {
 
 // tourRoutes.js
 tourRouter.route('/:id').delete(protect, retrictTo('admin'), deleteTour)
+```
+### P139 安全
+<img src="./4-natours/public/img/security.png">
+
+- 非法访问数据库；
+- 暴力破解；
+- 跨站脚本攻击（Cross-Site Scripting, XSS）：攻击者向网站插入恶意客户端脚本，当用户访问网站时，恶意脚本会自动执行。
+  - 存储型：攻击者将恶意脚本提交到目标网站的数据库或论坛、评论可持久化存储区域，当用户访问含有此恶意脚本的页面时会自动执行，窃取用户敏感信息。
+  - 反射型：通过带有恶意脚本的URL进行，通过即时消息传播。用户点击链接后，恶意脚本作为请求的一部分发送到服务器，服务器将恶意脚本作为响应的一部分返回给用户。
+  - DOM Based XSS：攻击者通过修改页面上的DOM元素，使得脚本在用户浏览器中执行。
+- 拒绝服务（Denial-of Service, DOS）：通过大量恶意流量或资源消耗，使目标服务器、网络设备、数据库或应用程序无法正常工作。
+  - 分布式拒绝服务：通过多个IP地址发起攻击，防御困难。
+  - 单点拒绝服务：单一攻击者或设备发起，直接针对目标服务器或网络设备，发送大量请求耗尽资源。
+
+### P140 cookie
+cookie是服务器发送到用户浏览器并保存在本地的一小块数据，客户端发送请求时会自动携带。token可以被存储在客户端localStorage中，也可以存储在cookie中。出于安全考虑本项目存储在cookie中。
+
+```javascript
+// authController.js 创建并发送cookie
+exports.createSendToken = (user, statusCode, res) => {
+  const token = signToken(user._id)
+  const cookieOptions = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
+    ), // 过期时间
+    httpOnly: true, // 只读
+  };
+
+  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true; // https上发送
+  res.cookie('jwt', token, cookieOptions);
+  res.status(statusCode).json({
+    data: 'success',
+    token,
+    data: {
+      user,
+    },
+  });
+}
 ```
