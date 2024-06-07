@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
+// const User = require('./userModel');
 
 const slugify = require('slugify');
 const validator = require('validator');
@@ -108,6 +109,12 @@ const tourSchema = new Schema(
         day: Number,
       },
     ],
+    guides: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+      },
+    ],
   },
   {
     toJSON: { virtuals: true }, // 虚拟属性
@@ -126,6 +133,13 @@ tourSchema.pre('save', function (next) {
   next();
 });
 
+// 这种方式如果 “导游”用户发生变化，那么“旅游”也要做更新，不推荐。
+// tourSchema.pre('save', async function (next) {
+//   const guidesPromises = this.guides.map(async (id) => await User.findById(id));
+//   this.guides = await Promise.all(guidesPromises);
+//   next();
+// });
+
 tourSchema.pre('save', function (next) {
   console.log('Will save document');
   next();
@@ -139,8 +153,15 @@ tourSchema.post('save', function (doc, next) {
 // QUERY MIDDLEWARE
 tourSchema.pre(/^find/, function (next) {
   this.find({ secretTour: { $ne: true } });
-
   this.start = Date.now();
+  next();
+});
+
+tourSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'guides',
+    select: '-__v -passwordChangedAt',
+  });
   next();
 });
 

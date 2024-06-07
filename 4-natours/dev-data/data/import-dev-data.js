@@ -15,9 +15,7 @@ mongoose.connect(DB).then(() => {
 });
 
 // 读取文件
-const tours = JSON.parse(
-  fs.readFileSync(`${__dirname}/tours-simple.json`, 'utf-8'),
-);
+const tours = JSON.parse(fs.readFileSync(`${__dirname}/tours.json`, 'utf-8'));
 
 // 导入文件
 const importData = async () => {
