@@ -84,6 +84,30 @@ const tourSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    startLocation: {
+      // type 是 GeoJSON Object
+      type: {
+        type: String,
+        default: 'Point',
+        enum: ['Point'],
+      },
+      coordinates: [Number],
+      address: String,
+      description: String,
+    },
+    locations: [
+      {
+        type: {
+          type: String,
+          default: 'Point',
+          enmu: ['Point'],
+        },
+        coordinates: [Number],
+        address: String,
+        description: String,
+        day: Number,
+      },
+    ],
   },
   {
     toJSON: { virtuals: true }, // 虚拟属性

@@ -1150,7 +1150,7 @@ exports.createSendToken = (user, statusCode, res) => {
   });
 }
 ```
-### P142 express-rate-limit
+### P141 express-rate-limit
 express-rate-limit是一个中间件，用于限制请求频率。
 ```javascript
 const limit = rateLimit({
@@ -1159,7 +1159,7 @@ const limit = rateLimit({
   message: 'Too many requests from this IP, please try again in an hour!', // 超过限制时，返回给客户端的限制信息
 }
 ```
-### P143 helmet中间件
+### P142 helmet中间件
 helmet是一个中间件，用于设置HTTP响应头，提高安全性，防范常见web漏洞。包括但不限于：
 - Content-Security-Policy：设置内容安全策略，通过定义白名单指明哪些外部资源可被加载，防止XSS攻击。
 - X-Content-Type-Options：设置禁止MIME类型检测，防止MIME类型检测漏洞。
@@ -1168,10 +1168,67 @@ helmet是一个中间件，用于设置HTTP响应头，提高安全性，防范�
 - Strict-Transport-Security：强制浏览器只能通过HTTPS与服务器通信，防止协议降级攻击。
 - Referrer-Policy：设置Referrer头，防止Referrer信息泄露。
 
-### P144 express-mongo-sanitize中间件、xss-clean中间件
+### P143 express-mongo-sanitize中间件、xss-clean中间件
 防止注入NOSQL语句和JS脚本
 - express-mongo-sanitize是一个中间件，用于过滤MongoDB的查询参数，防止MongoDB注入攻击。
 - xss-clean是一个中间件，用于过滤XSS攻击，防止XSS攻击。
 
-### P145 hpp中间件
+### P144 hpp中间件
 hpp中间件用于防止HTTP参数污染，检测和阻止请求中出现的重复参数名问题。
+
+### P145 ~ 146 MongDB Data Model设计
+#### Referenced / Normalized 引用 / 规范化设计
+类似于关系型数据库中的外键概念，集合中的文档通过存储另一个集合中文档的`_id`作为引用，带遍两个实体之间的关联关系。
+
+优点：性能方面更单独查询单个文档。缺点：需要两次查询才能获取完整的数据
+#### Embedded / Denormalized 嵌入
+将数据直接嵌入到副文档中，相当于一个文档可能包含整个子文档结构。
+
+优点：一次查询完整的数据。缺点：无法单独查询嵌入的文档。
+
+#### 设计策略
+<img src="./4-natours/public/img/model设计建议.png">
+
+- 构建数据结构，使其与应用程序查询和更新数据的方式相匹配；
+- 在大多数情况下，建议嵌入数据，除非有充分的理由不这样做。特别是在1 : 1、1 : FEW、1 : MANY的关系中。
+- 如果存在1 : Ton 或 Many : Many关系，则通常建议referenced而不是embedded。
+- 当数据被频繁更新或者需要频繁访问一个独立的数据集时，也建议referenced引用。
+- 嵌入适用于数据主要用于读取但很少更新的情况，以及两个数据集紧密相关的情况。
+- 不要让数组无限增长。在使用规范化时，对于1 ： MANY关系，请使用子引用；对于1 : TON关系，请使用父引用。
+### P147 natour data model
+<img src="./4-natours/public/img/natours-data-model.png">
+
+### P148 model location
+`Tour` 和 `Location`之间是 `Few : Few`的关系，所以将`Location`嵌入到`Tour`中。
+```javascript
+// tourModel
+const tourSchema = new Schema(
+  ...
+  startLocation: {
+    // type 是 GeoJSON Object
+    type: {
+      type: String,
+      default: 'Point',
+      enum: ['Point'],
+    },
+    coordinates: [Number],
+    address: String,
+    description: String,
+  },
+  locations: [
+    {
+      type: {
+        type: String,
+        default: 'Point',
+        enmu: ['Point'],
+      },
+      coordinates: [Number],
+      address: String,
+      description: String,
+      day: Number,
+    },
+  ],
+)
+```
+GeoJSON是一种基于JSON的地理数据格式，用于编码地理空间信息，有点、线、面三种几何对象。
+
