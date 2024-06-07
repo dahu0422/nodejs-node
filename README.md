@@ -1233,7 +1233,7 @@ const tourSchema = new Schema(
 GeoJSON是一种基于JSON的地理数据格式，用于编码地理空间信息，有点、线、面三种几何对象。
 
 ### P149 ~ 151 model tour guide
-通过`child referenced`的方式，将`User`嵌入到`Tour`中。
+通过`child referenced`的方式，将`User`嵌入到`Tour`中。存储在`Tour`中的只是`UserId`，在查询“旅游”时，通过`query.populate()`方法将`User`信息填充到`Tour`中。
 ```javascript
 // tourModel.js
 const tourSchema = new Schema({
@@ -1247,7 +1247,7 @@ const tourSchema = new Schema({
 })
 
 // 中间件：查询“旅游”时，查询其“导游”信息
-tourSchema.pre(/^find/, () => {
+tourSchema.pre(/^find/, function(next) {
   this.populate({
     path: 'guides',
     select: '-__v -passwordChangedAt',
