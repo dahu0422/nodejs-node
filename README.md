@@ -1365,3 +1365,15 @@ exports.getTour = catchAsync(async (req, res, next) => {
   ...
 })
 ```
+
+### P156 ～ P158 Nested routes 嵌套路由
+```javascript
+// tourRoutes.js
+
+// Post tourId/reviews
+router.use('/:tourId/reviews', reviewRouter);
+
+// reviewRoutes.js
+const router = express.Router({ mergeParams: true }); // 保留来自父路由的req.params值
+
+```
