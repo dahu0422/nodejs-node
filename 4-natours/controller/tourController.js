@@ -40,7 +40,7 @@ exports.createTour = catchAsync(async (req, res, next) => {
 
 // 查询某一条旅游数据
 exports.getTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findById(req.params.id); // 根据id查找
+  const tour = await Tour.findById(req.params.id).populate('reviews'); // 根据id查找
   if (!tour) {
     return next(new AppError('No tour found with that IP', 404));
   }

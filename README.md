@@ -1255,3 +1255,113 @@ tourSchema.pre(/^find/, function(next) {
   next()
 })
 ```
+
+### P152 ~ P154 model review、route review, controller review
+创建`review`模型、`review`控制器、`review`路由。
+```javascript
+// reviewModel.js
+// rating / createdAt / ref to Tour / ref to User
+const mongoose = require('mongoose');
+
+const reviewSchema = new mongoose.Schema(
+  {
+    review: {
+      type: String,
+      required: [true, 'Review can not be empty'],
+    },
+    rating: {
+      type: Number,
+      min: 1,
+      max: 5,
+      required: [true, 'A review must have a rating'],
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now(),
+    },
+    tour: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Tour',
+      required: [true, 'Review must belong to a tour'],
+    },
+    user: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
+      required: [true, 'Review must belong to a user'],
+    },
+  },
+  {
+    toJSON: { virtuals: true }, // 虚拟属性
+    toObject: { virtuals: true },
+  },
+);
+
+const Review = mongoose.model('Review', reviewSchema);
+module.exports = Review;
+```
+
+```javascript
+// reviewRoutes.js
+const express = require('express');
+const { protect, restrictTo } = require('../controller/authController');
+
+const {
+  getAllReviews,
+  createReview,
+} = require('../controller/reviewController.js');
+
+const router = express.Router();
+
+router
+  .route('/')
+  .get(getAllReviews)
+  .post(protect, restrictTo('user'), createReview);
+
+module.exports = router;
+```
+
+```javascript
+// reviewController.js
+const Review = require('../models/reviewModel.js');
+const catchAsync = require('../utils/catchAsync.js');
+
+// 查询评论
+exports.getAllReviews = catchAsync(async (req, res, next) => {
+  const reviews = await Review.find();
+
+  res.status(200).json({
+    status: 'success',
+    data: { reviews },
+  });
+});
+
+// 创建评论
+exports.createReview = catchAsync(async (req, res, next) => {
+  const newReview = await Review.create(req.body);
+
+  res.status(201).json({
+    status: 'success',
+    data: { newReview },
+  });
+});
+
+```
+
+### P155 virtual populate
+[virtual populate文档](https://mongoosejs.com/docs/populate.html#populate-virtuals)
+
+最小基数原则，一对多的关系（一条旅游数据对应多条评论）应存储在多的一侧。也就是“评论”应存储“旅游”的信息。
+```javascript
+// tourModel.js
+tourSchema.virtual('reviews', {
+  ref: 'Review',
+  localField: '_id',
+  foreignField: 'tour',
+})
+
+// tourController.js
+exports.getTour = catchAsync(async (req, res, next) => {
+  const tour = await Tour.findById(req.params.id).populate('reviews');
+  ...
+})
+```

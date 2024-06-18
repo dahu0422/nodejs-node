@@ -10,6 +10,7 @@ const globalErrorHandler = require('./controller/errorController');
 const AppError = require('./utils/appError');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
+const reviewRouter = require('./routes/reviewRoutes');
 
 const app = express();
 
@@ -65,6 +66,7 @@ app.use((req, res, next) => {
 // 2.Routes
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/reviews', reviewRouter);
 
 // 匹配所有http请求方法，如果不是已定义路由，则创建appError实例，传入错误信息和状态吗404.
 app.all('*', (req, res, next) => {
