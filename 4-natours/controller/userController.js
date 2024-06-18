@@ -1,6 +1,7 @@
 const User = require('../models/userModel.js');
 const AppError = require('../utils/appError.js');
 const catchAsync = require('../utils/catchAsync.js');
+const { deleteOne, updateOne, getOne, getAll } = require('./handlerFactory.js');
 
 const filterObj = (obj, ...allowFields) => {
   const newObj = {};
@@ -8,6 +9,11 @@ const filterObj = (obj, ...allowFields) => {
     if (allowFields.includes(x)) newObj[x] = obj[x];
   });
   return newObj;
+};
+
+exports.getMe = (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
 };
 
 // 更新用户信息
@@ -47,16 +53,7 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
 });
 
 // 获取所有用户信息
-exports.getAllUsers = catchAsync(async (req, res, next) => {
-  const users = await User.find();
-
-  res.status(200).json({
-    status: 200,
-    data: {
-      users,
-    },
-  });
-});
+exports.getAllUsers = getAll(User);
 
 // 创建新用户信息
 exports.createUser = (req, res) => {
@@ -67,25 +64,8 @@ exports.createUser = (req, res) => {
 };
 
 // 查询某位用户信息
-exports.getUser = (req, res) => {
-  res.status(500).json({
-    status: 500,
-    messgae: 'This route is not yet defined',
-  });
-};
-
-// 更新某位用户信息
-exports.updateUser = (req, res) => {
-  res.status(500).json({
-    status: 500,
-    messgae: 'This route is not yet defined',
-  });
-};
-
+exports.getUser = getOne(User);
+// 更新某位用户信息，不包括密码
+exports.updateUser = updateOne(User);
 //  删除某位用户信息
-exports.deleteUser = (req, res) => {
-  res.status(500).json({
-    status: 500,
-    messgae: 'This route is not yet defined',
-  });
-};
+exports.deleteUser = deleteOne(User);

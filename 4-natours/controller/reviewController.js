@@ -1,28 +1,27 @@
 const Review = require('../models/reviewModel.js');
 const catchAsync = require('../utils/catchAsync.js');
+const {
+  deleteOne,
+  updateOne,
+  createOne,
+  getOne,
+  getAll,
+} = require('./handlerFactory.js');
 
-// 查询评论
-exports.getAllReviews = catchAsync(async (req, res, next) => {
-  let filter = {};
-  if (req.params.tourId) filter = { tour: req.params.tourId };
-  const reviews = await Review.find(filter);
-
-  res.status(200).json({
-    status: 'success',
-    data: { reviews },
-  });
-});
-
-// 创建评论
-exports.createReview = catchAsync(async (req, res, next) => {
+exports.setTourUserIds = (req, res, next) => {
   if (!req.body.tour) req.body.tour = req.params.tourId;
   if (!req.body.user) req.body.user = req.user.id;
 
-  console.log(req.body);
-  const newReview = await Review.create(req.body);
+  next();
+};
 
-  res.status(201).json({
-    status: 'success',
-    data: { newReview },
-  });
-});
+// 查询评论
+exports.getAllReviews = getAll(Review);
+// 查询某条评论
+exports.getReview = getOne(Review);
+// 创建评论
+exports.createReview = createOne(Review);
+// 更新评论
+exports.updateReview = updateOne(Review);
+// 删除评论
+exports.deleteReview = deleteOne(Review);

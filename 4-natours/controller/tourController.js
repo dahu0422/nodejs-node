@@ -1,7 +1,13 @@
 const Tour = require('./../models/tourModel');
-const APIFeatures = require('../utils/apiFeatures');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const {
+  deleteOne,
+  updateOne,
+  createOne,
+  getOne,
+  getAll,
+} = require('./handlerFactory');
 
 // 获取Top5的旅游数据
 exports.aliasTopTours = (req, res, next) => {
@@ -12,71 +18,15 @@ exports.aliasTopTours = (req, res, next) => {
 };
 
 // 获取所有旅游数据
-exports.getAllTours = catchAsync(async (req, res, next) => {
-  // EXECUTE QUERY
-  const features = new APIFeatures(Tour.find(), req.query)
-    .filter()
-    .sort()
-    .limitFiedlds()
-    .pagination();
-  const tours = await features.query;
-
-  //SEND RESPONSE
-  res.status(200).json({
-    status: 'success',
-    resule: tours.length,
-    data: { tours },
-  });
-});
-
+exports.getAllTours = getAll(Tour);
 // 创建一条旅游数据
-exports.createTour = catchAsync(async (req, res, next) => {
-  const newTour = await Tour.create(req.body);
-  res.status(200).json({
-    status: 'success',
-    data: { newTour },
-  });
-});
-
+exports.createTour = createOne(Tour);
 // 查询某一条旅游数据
-exports.getTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findById(req.params.id).populate('reviews'); // 根据id查找
-  if (!tour) {
-    return next(new AppError('No tour found with that IP', 404));
-  }
-  res.status(200).json({
-    status: 'success',
-    data: { tour },
-  });
-});
-
+exports.getTour = getOne(Tour, { path: 'reviews' });
 // 修改某一条旅游数据
-exports.updateTour = catchAsync(async (req, res, next) => {
-  // 找到并修改这条数据，返回修改后的对象
-  const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
-  if (!tour) {
-    return next(new AppError('No tour found with that IP', 404));
-  }
-  res.status(200).json({
-    status: 'success',
-    data: { tour },
-  });
-});
-
+exports.updateTour = updateOne(Tour);
 // 删除某一条数据
-exports.deleteTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findByIdAndDelete(req.params.id);
-  if (!tour) {
-    return next(new AppError('No tour found with that IP', 404));
-  }
-  res.status(200).json({
-    status: 'success',
-    data: null,
-  });
-});
+exports.deleteTour = deleteOne(Tour);
 
 // 获取统计数据
 exports.getTourStats = catchAsync(async (req, res, next) => {

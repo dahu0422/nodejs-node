@@ -1377,3 +1377,5 @@ router.use('/:tourId/reviews', reviewRouter);
 const router = express.Router({ mergeParams: true }); // 保留来自父路由的req.params值
 
 ```
+
+### P159 ~ 160 Factory functions
