@@ -17,6 +17,7 @@ const {
   forgetPassword,
   resetPassword,
   updatePassword,
+  restrictTo,
 } = require('../controller/authController');
 
 const router = express.Router();
@@ -24,12 +25,17 @@ const router = express.Router();
 router.post('/signup', signup);
 router.post('/login', login);
 
+// Protect all routes after this middleware 路由保护
+router.use(protect);
+
 router.post('/forgetPassword', forgetPassword);
 router.patch('/resetPassword/:token', resetPassword);
-router.get('/me', protect, getMe, getUser);
-router.patch('/updateMyPassword', protect, updatePassword);
-router.patch('/updateMe', protect, updateMe);
-router.delete('/deleteMe', protect, deleteMe);
+router.get('/me', getMe, getUser);
+router.patch('/updateMyPassword', updatePassword);
+router.patch('/updateMe', updateMe);
+router.delete('/deleteMe', deleteMe);
+
+router.use(restrictTo('admin'));
 
 router.route('/').get(getAllUsers).post(createUser);
 router.route('/:id').get(getUser).patch(updateUser).delete(deleteUser);
